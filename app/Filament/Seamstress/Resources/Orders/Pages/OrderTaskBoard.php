@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Orders\Pages;
+namespace App\Filament\Seamstress\Resources\Orders\Pages;
 
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Order;
@@ -35,6 +35,11 @@ class OrderTaskBoard extends BoardResourcePage
         return "Редагування дошки для замовлення #{$order->id}";
     }
 
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
     public function board(Board $board): Board
     {
         return $board
@@ -52,8 +57,10 @@ class OrderTaskBoard extends BoardResourcePage
                 Column::make('todo')->label('Зробити')->color('gray'),
                 Column::make('in_progress')->label('В процесі')->color('blue'),
                 Column::make('completed')->label('Заершено')->color('green'),
+
             ])
-            ->cardSchema(fn(Schema $schema) => $schema
+
+            ->cardSchema(fn(Schema $schema) => $schema        // Rich card content
                 ->components([
                     TextEntry::make('description')
                         ->hiddenLabel()
@@ -73,7 +80,8 @@ class OrderTaskBoard extends BoardResourcePage
                             ->label('Опис')
                             ->required(),
                 ])->model(Task::class),                              // Card-level actions
-                DeleteAction::make()->model(Task::class)->modalHeading('Видалення завдання'),
+                DeleteAction::make()->model(Task::class)
+                ->modalHeading('Видалення завдання'),
             ])
             ->cardAction('edit')
             ->columnActions([
@@ -90,7 +98,7 @@ class OrderTaskBoard extends BoardResourcePage
                             ->label('Опис')
                             ->required(),
 
-                            Select::make('priority')
+                        Select::make('priority')
                             ->label('Пріоритет')
                             ->options(['low' => 'Низький', 'medium' => 'Середній', 'high' => 'Високий'])
                             ->default('medium'),
