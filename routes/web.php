@@ -1,11 +1,11 @@
 <?php
 
+use App\Livewire\TaskBoard;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/tasks/board', function () {
-    return view('tasks.board');
-})->name('tasks.board');
+Route::get('/orders/{order}/tasks', TaskBoard::class)
+    ->name('orders.tasks');
