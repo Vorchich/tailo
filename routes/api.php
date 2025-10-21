@@ -18,6 +18,14 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\SeamstressStatisticController;
 use App\Http\Controllers\Apple\AppleCalbackController;
 use App\Http\Controllers\Apple\AppleController;
+use App\Http\Controllers\Auth\AppleAuthController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\SendEmailVerificationController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Middleware\SeamstressAccessMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +43,35 @@ use Illuminate\Support\Facades\Route;
     Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::post('/auth/register', [RegisteredUserController::class, 'store'])
+                ->middleware('guest')
+                ->name('register');
+
+    Route::post('/auth/login', [AuthenticatedSessionController::class, 'store'])
+                    ->middleware('guest')
+                    ->name('login');
+
+    Route::post('/auth/request-password-reset', [PasswordResetLinkController::class, 'store'])
+                    ->middleware('guest')
+                    ->name('password.email');
+
+    Route::post('/auth/reset-password', [NewPasswordController::class, 'store'])
+                    ->middleware('guest')
+                    ->name('password.store');
+
+    Route::post('/auth/confirm-registration', VerifyEmailController::class)
+                    ->name('verification.verify');
+
+    Route::post('/auth/logout', [AuthenticatedSessionController::class, 'destroy'])
+                    ->middleware('auth')
+                    ->name('logout');
+
+    Route::post('/auth/send-email', [SendEmailVerificationController::class, 'send'])
+                    ->name('send.email');
+
+    Route::post('/auth/google_login', [GoogleAuthController::class, 'login']);
+
+    Route::post('/auth/apple_login', [AppleAuthController::class, 'login']);
 
     Route::prefix('apple')->group(function () {
         Route::post('/callback', [AppleCalbackController::class, 'callback']);
